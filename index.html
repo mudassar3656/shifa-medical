@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shifa Medical Centre – Trusted Healthcare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --teal: #0a7c6e;
+      --teal-light: #0fa390;
+      --teal-pale: #e6f7f5;
+      --cream: #faf8f4;
+      --dark: #111c1a;
+      --dark2: #1e2e2b;
+      --text: #1a2e2a;
+      --muted: #6b8280;
+      --white: #ffffff;
+      --border: #dceae8;
+    }
+
+    html { scroll-behavior: smooth; font-size: 18px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* REVEAL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 20px 80px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(250,248,244,0.97);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--dark);
+      letter-spacing: 0.5px;
+    }
+    .logo span { color: var(--teal); }
+
+    nav ul { list-style: none; display: flex; gap: 40px; align-items: center; }
+    nav a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: color 0.3s;
+    }
+    nav a:hover, nav a.active { color: var(--teal); }
+
+    .nav-cta {
+      background: var(--teal) !important;
+      color: var(--white) !important;
+      padding: 11px 26px; border-radius: 50px;
+      font-weight: 600 !important;
+      transition: background 0.3s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--teal-light) !important; transform: translateY(-1px); }
+
+    /* HAMBURGER */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      width: 26px; height: 2px;
+      background: var(--dark); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 72px; left: 0; right: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 32px;
+      flex-direction: column; gap: 20px;
+      z-index: 99;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      text-decoration: none; color: var(--text);
+      font-size: 1.05rem; font-weight: 500;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu .m-cta {
+      background: var(--teal); color: var(--white);
+      padding: 14px; text-align: center;
+      border-radius: 50px; border: none; font-weight: 600;
+      font-size: 1rem; margin-top: 8px;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 120px 80px 80px;
+      gap: 60px;
+      position: relative; overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(10,124,110,0.08) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--teal-pale); border: 1px solid rgba(10,124,110,0.2);
+      color: var(--teal); font-size: 0.82rem; font-weight: 600;
+      padding: 8px 18px; border-radius: 50px; margin-bottom: 28px;
+    }
+
+    .hero-badge::before {
+      content: ''; width: 8px; height: 8px;
+      background: var(--teal); border-radius: 50%;
+      animation: breathe 2s infinite;
+    }
+
+    @keyframes breathe {
+      0%,100%{ transform: scale(1); opacity: 1; }
+      50%{ transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5vw, 4.8rem);
+      font-weight: 700; line-height: 1.1;
+      color: var(--dark);
+    }
+
+    .hero h1 em {
+      font-style: italic; color: var(--teal);
+      display: block;
+    }
+
+    .hero p {
+      margin-top: 22px; font-size: 1.1rem;
+      color: var(--muted); line-height: 1.8;
+      max-width: 480px;
+    }
+
+    .hero-btns {
+      display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap;
+    }
+
+    .btn-teal {
+      background: var(--teal); color: var(--white);
+      padding: 16px 36px; border: none; border-radius: 50px;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      font-size: 1rem; cursor: pointer; text-decoration: none;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 8px 30px rgba(10,124,110,0.3);
+    }
+    .btn-teal:hover {
+      background: var(--teal-light);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(10,124,110,0.4);
+    }
+
+    .btn-outline {
+      background: transparent; color: var(--teal);
+      padding: 16px 36px; border: 2px solid var(--teal);
+      border-radius: 50px; font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover {
+      background: var(--teal); color: var(--white);
+    }
+
+    .hero-trust {
+      display: flex; gap: 36px; margin-top: 50px;
+      padding-top: 36px; border-top: 1px solid var(--border);
+    }
+
+    .trust-item { }
+
+    .trust-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 700;
+      color: var(--teal); display: block; line-height: 1;
+    }
+
+    .trust-label {
+      font-size: 0.82rem; color: var(--muted); margin-top: 4px;
+    }
+
+    /* HERO VISUAL */
+    .hero-visual { position: relative; }
+
+    .hero-card-main {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 20px 80px rgba(10,124,110,0.12);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .hero-icon-big { font-size: 5rem; display: block; margin-bottom: 20px; }
+
+    .hero-card-main h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 10px;
+    }
+
+    .hero-card-main p { font-size: 0.95rem; color: var(--muted); }
+
+    .floating-tag {
+      position: absolute;
+      background: var(--white); border-radius: 14px;
+      padding: 14px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-tag:nth-child(2) { top: -20px; right: -20px; animation-delay: 0s; }
+    .floating-tag:nth-child(3) { bottom: 20px; left: -30px; animation-delay: 1.5s; }
+
+    @keyframes float {
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-10px); }
+    }
+
+    .tag-icon { font-size: 1.6rem; }
+
+    .tag-text strong { display: block; font-size: 0.95rem; font-weight: 600; color: var(--dark); }
+    .tag-text span { font-size: 0.78rem; color: var(--muted); }
+
+    /* SECTION BASE */
+    section { padding: 100px 80px; }
+
+    .sec-label {
+      font-size: 0.78rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--teal); font-weight: 600; display: block; margin-bottom: 14px;
+    }
+
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 700; color: var(--dark); line-height: 1.2;
+    }
+
+    /* SERVICES PREVIEW */
+    #services-preview {
+      background: var(--white);
+      position: relative;
+    }
+
+    .services-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 60px;
+    }
+
+    .services-header a {
+      text-decoration: none; color: var(--teal); font-weight: 600;
+      font-size: 0.95rem; border-bottom: 2px solid var(--teal);
+      padding-bottom: 2px; transition: color 0.3s;
+    }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .service-card {
+      background: var(--cream); border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px 32px;
+      transition: all 0.4s; cursor: default;
+      position: relative; overflow: hidden;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 4px; background: var(--teal);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s;
+    }
+
+    .service-card:hover {
+      background: var(--white);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(10,124,110,0.12);
+    }
+
+    .service-card:hover::after { transform: scaleX(1); }
+
+    .service-icon {
+      width: 64px; height: 64px;
+      background: var(--teal-pale); border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin-bottom: 24px;
+    }
+
+    .service-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 12px;
+    }
+
+    .service-card p { font-size: 0.95rem; color: var(--muted); line-height: 1.8; }
+
+    /* DOCTORS CAROUSEL */
+    #doctors { background: var(--cream); }
+
+    .doctors-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 50px;
+    }
+
+    .carousel-controls { display: flex; gap: 12px; }
+
+    .ctrl-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 2px solid var(--teal); background: transparent;
+      color: var(--teal); font-size: 1.2rem; cursor: pointer;
+      transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+    }
+    .ctrl-btn:hover { background: var(--teal); color: var(--white); }
+
+    .carousel-wrapper { overflow: hidden; }
+
+    .carousel-track {
+      display: flex; gap: 28px;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .doctor-card {
+      min-width: calc(33.333% - 19px);
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px; flex-shrink: 0;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+    .doctor-card:hover {
+      box-shadow: 0 16px 50px rgba(10,124,110,0.1);
+      transform: translateY(-4px);
+    }
+
+    .doctor-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--teal-pale);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; margin-bottom: 20px;
+      border: 3px solid rgba(10,124,110,0.15);
+    }
+
+    .doctor-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 700; color: var(--dark); margin-bottom: 4px;
+    }
+
+    .doctor-spec {
+      font-size: 0.85rem; color: var(--teal); font-weight: 600; margin-bottom: 16px;
+    }
+
+    .doctor-card p { font-size: 0.92rem; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+
+    .doctor-exp {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; color: var(--muted);
+    }
+
+    .doctor-exp span { color: var(--teal); font-weight: 600; font-size: 1rem; }
+
+    /* TESTIMONIALS */
+    #testimonials { background: var(--white); }
+
+    .testimonials-header { text-align: center; margin-bottom: 60px; }
+
+    .testimonials-track-wrap { overflow: hidden; }
+
+    .testimonials-track {
+      display: flex; gap: 28px;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .testi-card {
+      min-width: calc(50% - 14px); flex-shrink: 0;
+      background: var(--cream); border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px;
+    }
+
+    .testi-stars { color: #f4a235; font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 2px; }
+
+    .testi-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-style: italic;
+      color: var(--dark); line-height: 1.7; margin-bottom: 28px;
+    }
+
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+
+    .testi-avatar {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--teal-pale);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .testi-name { font-weight: 600; font-size: 0.95rem; color: var(--dark); }
+    .testi-role { font-size: 0.82rem; color: var(--muted); }
+
+    .testi-dots {
+      display: flex; gap: 8px; justify-content: center; margin-top: 36px;
+    }
+
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--border); cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active { background: var(--teal); width: 24px; border-radius: 4px; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: var(--dark2); padding: 80px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(10,124,110,0.3) 0%, transparent 70%);
+    }
+
+    .cta-banner h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+      color: var(--white); margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+
+    .cta-banner p {
+      color: rgba(255,255,255,0.65); font-size: 1.05rem;
+      margin-bottom: 36px; position: relative; z-index: 1;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark); padding: 70px 80px 36px;
+    }
+
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; margin-bottom: 60px;
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--white); display: block; margin-bottom: 16px;
+    }
+
+    .footer-logo span { color: var(--teal-light); }
+
+    .footer-brand p {
+      color: rgba(255,255,255,0.5); font-size: 0.92rem;
+      line-height: 1.8; max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.78rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--teal-light); margin-bottom: 24px; font-weight: 600;
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 14px; }
+    .footer-col a {
+      text-decoration: none; color: rgba(255,255,255,0.5);
+      font-size: 0.92rem; transition: color 0.3s;
+    }
+    .footer-col a:hover { color: var(--white); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 30px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .footer-bottom p { color: rgba(255,255,255,0.35); font-size: 0.85rem; }
+    .footer-bottom span { color: var(--teal-light); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 16px 28px; }
+      nav ul { display: none; }
+      .hamburger { display: flex; }
+
+      .hero { grid-template-columns: 1fr; padding: 100px 28px 60px; gap: 40px; }
+      .hero-visual { display: none; }
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1rem; }
+      .hero-trust { gap: 24px; }
+
+      section { padding: 70px 28px; }
+
+      .services-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .services-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      .doctors-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .carousel-track { gap: 16px; }
+      .doctor-card { min-width: calc(85vw); }
+
+      .testimonials-track { gap: 16px; }
+      .testi-card { min-width: calc(90vw); }
+
+      .cta-banner { padding: 60px 28px; }
+      .hero-btns { flex-direction: column; }
+      .btn-teal, .btn-outline { text-align: center; }
+
+      footer { padding: 50px 28px 28px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+    }
+
+    @media (max-width: 500px) {
+      .footer-top { grid-template-columns: 1fr; }
+      .hero-trust { flex-wrap: wrap; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="logo">Shifa <span>Medical</span></div>
+    <ul>
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="contact.html" class="nav-cta">Book Appointment</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="m-cta">Book Appointment</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Now Accepting New Patients</div>
+      <h1>Your Health,<em>Our Priority</em></h1>
+      <p>Shifa Medical Centre brings world-class healthcare to your doorstep. Experienced doctors, modern facilities, and compassionate care — all under one roof.</p>
+      <div class="hero-btns">
+        <a href="contact.html" class="btn-teal">Book Appointment</a>
+        <a href="services.html" class="btn-outline">Our Services</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item">
+          <span class="trust-num">15+</span>
+          <div class="trust-label">Years of Care</div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-num">40+</span>
+          <div class="trust-label">Expert Doctors</div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-num">98%</span>
+          <div class="trust-label">Patient Satisfaction</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-tag">
+        <div class="tag-icon">⭐</div>
+        <div class="tag-text">
+          <strong>Top Rated</strong>
+          <span>4.9 / 5.0 Rating</span>
+        </div>
+      </div>
+      <div class="hero-card-main reveal">
+        <span class="hero-icon-big">🏥</span>
+        <h3>Trusted Since 2009</h3>
+        <p>Serving thousands of patients across Lahore with expert, compassionate care every single day.</p>
+      </div>
+      <div class="floating-tag">
+        <div class="tag-icon">✅</div>
+        <div class="tag-text">
+          <strong>24/7 Emergency</strong>
+          <span>Always Available</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES PREVIEW -->
+  <section id="services-preview">
+    <div class="services-header reveal">
+      <div>
+        <span class="sec-label">What We Offer</span>
+        <h2 class="sec-title">Our Core Services</h2>
+      </div>
+      <a href="services.html">View All Services →</a>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal" style="transition-delay:0.1s">
+        <div class="service-icon">❤️</div>
+        <h3>Cardiology</h3>
+        <p>Complete heart health management including ECG, echo, stress tests and specialist consultations.</p>
+      </div>
+      <div class="service-card reveal" style="transition-delay:0.2s">
+        <div class="service-icon">🧠</div>
+        <h3>Neurology</h3>
+        <p>Expert diagnosis and treatment of brain and nervous system disorders with advanced imaging.</p>
+      </div>
+      <div class="service-card reveal" style="transition-delay:0.3s">
+        <div class="service-icon">🦷</div>
+        <h3>Dental Care</h3>
+        <p>Full range of dental services from routine cleaning to implants, orthodontics and cosmetic dentistry.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCTORS CAROUSEL -->
+  <section id="doctors">
+    <div class="doctors-header reveal">
+      <div>
+        <span class="sec-label">Meet The Team</span>
+        <h2 class="sec-title">Our Specialists</h2>
+      </div>
+      <div class="carousel-controls">
+        <button class="ctrl-btn" id="docPrev">&#8592;</button>
+        <button class="ctrl-btn" id="docNext">&#8594;</button>
+      </div>
+    </div>
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="docTrack">
+        <div class="doctor-card">
+          <div class="doctor-avatar">👨‍⚕️</div>
+          <h3>Dr. Arif Mehmood</h3>
+          <div class="doctor-spec">Cardiologist</div>
+          <p>MBBS, FCPS (Cardiology). Trained at Lahore General Hospital with expertise in interventional cardiology.</p>
+          <div class="doctor-exp"><span>18</span> Years Experience</div>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar">👩‍⚕️</div>
+          <h3>Dr. Sara Nawaz</h3>
+          <div class="doctor-spec">Neurologist</div>
+          <p>MBBS, MRCP (Neurology). Specialist in stroke management, epilepsy and neurodegenerative diseases.</p>
+          <div class="doctor-exp"><span>12</span> Years Experience</div>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar">👨‍⚕️</div>
+          <h3>Dr. Kamran Ali</h3>
+          <div class="doctor-spec">General Physician</div>
+          <p>MBBS, FCPS. Extensive experience in preventive medicine, diabetes management and internal medicine.</p>
+          <div class="doctor-exp"><span>20</span> Years Experience</div>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar">👩‍⚕️</div>
+          <h3>Dr. Hina Siddiqui</h3>
+          <div class="doctor-spec">Dermatologist</div>
+          <p>MBBS, DDV. Expert in skin disorders, cosmetic dermatology and laser treatments.</p>
+          <div class="doctor-exp"><span>9</span> Years Experience</div>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar">👨‍⚕️</div>
+          <h3>Dr. Faisal Raza</h3>
+          <div class="doctor-spec">Orthopedic Surgeon</div>
+          <p>MBBS, FRCS. Specialized in joint replacement, sports injuries and minimally invasive spine surgery.</p>
+          <div class="doctor-exp"><span>15</span> Years Experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="testimonials-header reveal">
+      <span class="sec-label">Patient Stories</span>
+      <h2 class="sec-title">What Our Patients Say</h2>
+    </div>
+    <div class="testimonials-track-wrap">
+      <div class="testimonials-track" id="testiTrack">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"The doctors at Shifa are incredibly thorough and caring. Dr. Arif diagnosed my condition accurately when two other hospitals had missed it. I am forever grateful."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">👨</div>
+            <div>
+              <div class="testi-name">Ahmed Raza</div>
+              <div class="testi-role">Cardiac Patient</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Clean facility, short waiting time and very professional staff. Dr. Sara explained everything in a way I could understand. Will definitely recommend to my family."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">👩</div>
+            <div>
+              <div class="testi-name">Sana Malik</div>
+              <div class="testi-role">Neurology Patient</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"Best dental experience I have ever had. Painless procedure, affordable pricing and the staff made me feel completely comfortable throughout."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">👦</div>
+            <div>
+              <div class="testi-name">Bilal Hassan</div>
+              <div class="testi-role">Dental Patient</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"The emergency team was outstanding. They handled my father's situation with speed and precision. I cannot thank the Shifa team enough."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">👧</div>
+            <div>
+              <div class="testi-name">Fatima Zaheer</div>
+              <div class="testi-role">Emergency Patient</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-dots" id="testiDots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-banner reveal">
+    <h2>Ready to Take Charge of Your Health?</h2>
+    <p>Book your appointment today — our team is ready to help you.</p>
+    <a href="contact.html" class="btn-teal">Book Appointment Now</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="footer-logo">Shifa <span>Medical</span></span>
+        <p>Providing trusted, compassionate healthcare to the people of Lahore since 2009.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">Cardiology</a></li>
+          <li><a href="services.html">Neurology</a></li>
+          <li><a href="services.html">Dental Care</a></li>
+          <li><a href="services.html">Orthopedics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">Gulberg III, Lahore</a></li>
+          <li><a href="#">+92 42 3500 0000</a></li>
+          <li><a href="#">Mon–Sat: 9AM–9PM</a></li>
+          <li><a href="#">24/7 Emergency</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span>Shifa Medical Centre</span>. All rights reserved.</p>
+      <p>Built with <span>♥</span> using HTML & CSS</p>
+    </div>
+  </footer>
+
+  <script>
+    // NAV SCROLL
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // HAMBURGER
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    // SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+
+    // DOCTORS CAROUSEL
+    const docTrack = document.getElementById('docTrack');
+    let docIndex = 0;
+    const docCards = docTrack.querySelectorAll('.doctor-card');
+    const visibleDocs = () => window.innerWidth < 900 ? 1 : 3;
+
+    function updateDocCarousel() {
+      const cardWidth = docTrack.parentElement.offsetWidth / visibleDocs();
+      const gap = 28;
+      docTrack.style.transform = `translateX(-${docIndex * (cardWidth + gap)}px)`;
+    }
+
+    document.getElementById('docNext').addEventListener('click', () => {
+      const maxIndex = docCards.length - visibleDocs();
+      docIndex = docIndex >= maxIndex ? 0 : docIndex + 1;
+      updateDocCarousel();
+    });
+
+    document.getElementById('docPrev').addEventListener('click', () => {
+      const maxIndex = docCards.length - visibleDocs();
+      docIndex = docIndex <= 0 ? maxIndex : docIndex - 1;
+      updateDocCarousel();
+    });
+
+    // Auto-slide doctors
+    setInterval(() => {
+      const maxIndex = docCards.length - visibleDocs();
+      docIndex = docIndex >= maxIndex ? 0 : docIndex + 1;
+      updateDocCarousel();
+    }, 3500);
+
+    // TESTIMONIALS AUTO-SLIDE
+    const testiTrack = document.getElementById('testiTrack');
+    const dots = document.querySelectorAll('.dot');
+    let testiIndex = 0;
+    const testiCards = testiTrack.querySelectorAll('.testi-card');
+    const visibleTestis = () => window.innerWidth < 900 ? 1 : 2;
+
+    function updateTesti() {
+      const w = testiTrack.parentElement.offsetWidth / visibleTestis();
+      testiTrack.style.transform = `translateX(-${testiIndex * (w + 28)}px)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === testiIndex));
+    }
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => { testiIndex = i; updateTesti(); });
+    });
+
+    setInterval(() => {
+      const maxT = Math.ceil(testiCards.length / visibleTestis()) - 1;
+      testiIndex = testiIndex >= maxT ? 0 : testiIndex + 1;
+      updateTesti();
+    }, 4000);
+
+    window.addEventListener('resize', () => {
+      updateDocCarousel();
+      updateTesti();
+    });
+  </script>
+</body>
+</html>
